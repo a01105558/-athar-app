@@ -1,0 +1,10 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# دالة مجدولة تشتغل كل دقيقة تلقائياً وتفحص مواقيت الصلاة لكل المشتركين
+[functions."check-prayers"]
+  schedule = "* * * * *"
