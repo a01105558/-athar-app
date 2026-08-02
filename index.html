@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>أثر | Athar - مواقيت الصلاة</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d3b2e" id="themeColorMeta">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="أثر">
+<link rel="icon" href="icon-192.png" type="image/png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep-green:#0d3b2e;
+    --deep-green-2:#0a2e24;
+    --emerald:#1a5c47;
+    --gold:#c9a24b;
+    --gold-light:#e6c976;
+    --cream:#f6f1e4;
+    --white:#ffffff;
+    --ink:#0d2620;
+    --card-bg:rgba(255,255,255,0.06);
+    --card-border:rgba(201,162,75,0.28);
+    --shadow:0 10px 30px rgba(0,0,0,0.25);
+    --radius-lg:26px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --bg1:var(--deep-green-2);
+    --bg2:#071f18;
+    --text-main:var(--cream);
+    --text-sub:#a9c2b8;
+    --header-text:var(--gold-light);
+    --radial-color:var(--emerald);
+    --panel-top:var(--deep-green);
+    --panel-bottom:var(--deep-green-2);
+    --panel-text:var(--gold-light);
+    color-scheme: dark;
+  }
+  html[data-theme="light"]{
+    --bg1:#f3ecd8;
+    --bg2:#e9dfc2;
+    --card-bg:rgba(13,59,46,0.05);
+    --card-border:rgba(201,162,75,0.45);
+    --text-main:#1c2b25;
+    --text-sub:#5c6d64;
+    --header-text:#0d3b2e;
+    --radial-color:rgba(26,92,71,.12);
+    --panel-top:#fffdf6;
+    --panel-bottom:#f3ecd8;
+    --panel-text:#0d3b2e;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Cairo', sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, var(--radial-color) 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    color:var(--text-main);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0;
+    overflow-x:hidden;
+    transition:background .5s ease, color .4s ease;
+  }
+  .app{
+    width:100%;
+    max-width:460px;
+    min-height:100vh;
+    position:relative;
+    padding:22px 18px calc(28px + env(safe-area-inset-bottom, 0px));
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .pattern-bg{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.06;
+    background-image:
+      repeating-linear-gradient(45deg, var(--gold) 0 2px, transparent 2px 40px),
+      repeating-linear-gradient(-45deg, var(--gold) 0 2px, transparent 2px 40px);
+    mask-image:linear-gradient(180deg, black, transparent 70%);
+    z-index:0;
+  }
+
+  header{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    animation:fadeDown .6s ease;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-mark{
+    width:44px;height:44px;
+    border-radius:14px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Amiri', serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--deep-green-2);
+    box-shadow:0 6px 16px rgba(201,162,75,.35);
+    flex:none;
+  }
+  .brand-title{
+    font-family:'Amiri', serif;
+    font-size:24px;
+    font-weight:700;
+    color:var(--header-text);
+    line-height:1;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:var(--text-sub);
+    letter-spacing:1px;
+    margin-top:3px;
+  }
+  .icon-btn{
+    width:42px;height:42px;
+    border-radius:50%;
+    border:1px solid var(--card-border);
+    background:var(--card-bg);
+    color:var(--text-main);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    font-size:18px;
+    transition:transform .25s ease, background .25s ease;
+    backdrop-filter:blur(6px);
+  }
+  .icon-btn:active{transform:scale(.92);}
+  .icon-btn svg{width:20px;height:20px;}
+  .header-actions{display:flex; gap:10px;}
+
+  .location-badge{
+    position:relative; z-index:1;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    width:fit-content;
+    max-width:100%;
+    margin:-6px auto 0;
+    padding:6px 14px;
+    border-radius:999px;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    font-size:12px;
+    color:var(--text-sub);
+    animation:fadeDown .6s ease .05s backwards;
+    cursor:pointer;
+  }
+  .location-badge svg{width:14px;height:14px; stroke:var(--gold); flex:none;}
+  .location-badge b{color:var(--text-main); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px;}
+
+  .clock-section{
+    position:relative; z-index:1;
+    text-align:center;
+    padding:6px 0 2px;
+    animation:fadeIn .7s ease;
+  }
+  .clock{
+    font-size:52px;
+    font-weight:800;
+    letter-spacing:2px;
+    font-variant-numeric:tabular-nums;
+    color:var(--text-main);
+    text-shadow:0 2px 18px rgba(201,162,75,.15);
+  }
+  .clock small{font-size:20px; font-weight:600; color:var(--gold-light); margin-inline-start:6px;}
+  .clock small.clock-sec{font-size:16px; opacity:.55; margin-inline-start:8px; font-variant-numeric:tabular-nums;}
+  .dates{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:8px;
+    font-size:13px;
+    color:var(--text-sub);
+  }
+  .dates span:not(:last-child)::after{
+    content:'•';
+    margin-inline-start:14px;
+    color:var(--gold);
+  }
+
+  .next-card{
+    position:relative; z-index:1;
+    border-radius:var(--radius-lg);
+    padding:26px 22px 24px;
+    background:linear-gradient(155deg, var(--emerald) 0%, var(--deep-green) 60%, var(--deep-green-2) 100%);
+    border:1px solid rgba(201,162,75,.4);
+    box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.06);
+    overflow:hidden;
+    animation:riseIn .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .next-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(220px 220px at 90% -10%, rgba(201,162,75,.35), transparent 60%),
+      radial-gradient(180px 180px at -10% 110%, rgba(201,162,75,.18), transparent 60%);
+    pointer-events:none;
+  }
+  .next-label{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:15px;
+    font-weight:700;
+    color:var(--gold-light);
+    letter-spacing:.5px;
+    margin-bottom:12px;
+  }
+  .dot-pulse{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--gold-light);
+    box-shadow:0 0 0 0 rgba(230,201,118,.6);
+    animation:pulse 1.8s infinite;
+  }
+  .next-name{
+    position:relative;
+    font-family:'Amiri', serif;
+    font-size:40px;
+    font-weight:700;
+    color:var(--white);
+    margin-bottom:4px;
+  }
+  .next-time{
+    position:relative;
+    font-size:15px;
+    color:var(--cream);
+    opacity:.85;
+    margin-bottom:18px;
+  }
+  .countdown-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .countdown-ring{
+    position:relative;
+    width:88px;height:88px;
+    flex:none;
+  }
+  .countdown-ring svg{transform:rotate(-90deg);}
+  .countdown-ring .bg-ring{stroke:rgba(255,255,255,.15);}
+  .countdown-ring .fg-ring{
+    stroke:var(--gold-light);
+    stroke-linecap:round;
+    transition:stroke-dashoffset .5s linear;
+  }
+  .countdown-icon{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .countdown-icon svg{width:30px;height:30px; stroke:var(--gold-light);}
+  .countdown-text{flex:1;}
+  .countdown-num{
+    font-size:30px;
+    font-weight:800;
+    color:var(--white);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:1px;
+  }
+  .countdown-caption{
+    font-size:12.5px;
+    color:var(--cream);
+    opacity:.75;
+    margin-top:2px;
+  }
+
+  .grid-title{
+    position:relative; z-index:1;
+    font-size:14px;
+    color:var(--text-sub);
+    margin:2px 4px -4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .grid-title::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, var(--card-border), transparent);
+  }
+  .prayers-grid{
+    position:relative; z-index:1;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+  }
+  .prayer-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-md);
+    padding:14px 8px;
+    text-align:center;
+    backdrop-filter:blur(8px);
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+    animation:fadeUp .6s ease backwards;
+  }
+  .prayer-card:active{transform:scale(.96);}
+  .prayer-card.active{
+    border-color:var(--gold);
+    background:linear-gradient(160deg, rgba(201,162,75,.22), rgba(201,162,75,.06));
+    box-shadow:0 6px 18px rgba(201,162,75,.18);
+  }
+  .prayer-card.passed{opacity:.5;}
+  .prayer-icon{margin-bottom:6px; display:flex; justify-content:center;}
+  .prayer-icon svg{width:22px;height:22px; stroke:var(--gold);}
+  .prayer-card.active .prayer-icon svg{stroke:var(--gold-light);}
+  .prayer-name{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-main);
+    margin-bottom:4px;
+  }
+  .prayer-time{
+    font-size:14px;
+    font-weight:600;
+    color:var(--gold);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .athan-card{
+    position:relative; z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    animation:fadeUp .6s ease .1s backwards;
+  }
+  .athan-info{display:flex; align-items:center; gap:12px;}
+  .athan-emoji{
+    width:40px;height:40px;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .athan-emoji svg{width:20px;height:20px; stroke:var(--deep-green-2);}
+  .athan-title{font-size:13.5px; font-weight:700; color:var(--text-main);}
+  .athan-sub{font-size:11.5px; color:var(--text-sub); margin-top:2px;}
+
+  .switch{
+    position:relative;
+    width:48px; height:28px;
+    flex:none;
+  }
+  .switch input{opacity:0; width:0; height:0;}
+  .switch-track{
+    position:absolute; inset:0;
+    background:rgba(255,255,255,.15);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    cursor:pointer;
+    transition:background .3s;
+  }
+  .switch-track::before{
+    content:'';
+    position:absolute;
+    width:20px;height:20px;
+    left:3px; top:2px;
+    background:var(--white);
+    border-radius:50%;
+    transition:transform .3s ease;
+    box-shadow:0 2px 6px rgba(0,0,0,.3);
+  }
+  .switch input:checked + .switch-track{background:var(--gold);}
+  .switch input:checked + .switch-track::before{transform:translateX(22px);}
+
+  .status-msg{
+    position:relative; z-index:1;
+    text-align:center;
+    font-size:12px;
+    color:var(--text-sub);
+    min-height:16px;
+  }
+  footer{
+    position:relative; z-index:1;
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-sub);
+    opacity:.7;
+    margin-top:4px;
+    padding-top:6px;
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  footer .amiri{font-family:'Amiri', serif; color:var(--gold);}
+
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  @keyframes fadeDown{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes riseIn{from{opacity:0; transform:translateY(18px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);}}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(230,201,118,.6);}
+    70%{box-shadow:0 0 0 8px rgba(230,201,118,0);}
+    100%{box-shadow:0 0 0 0 rgba(230,201,118,0);}
+  }
+
+  .prayer-card:nth-child(1){animation-delay:.02s;}
+  .prayer-card:nth-child(2){animation-delay:.08s;}
+  .prayer-card:nth-child(3){animation-delay:.14s;}
+  .prayer-card:nth-child(4){animation-delay:.2s;}
+  .prayer-card:nth-child(5){animation-delay:.26s;}
+
+  @media (max-width:360px){
+    .clock{font-size:44px;}
+    .next-name{font-size:32px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  .splash{
+    position:fixed; inset:0;
+    z-index:100;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    background:
+      radial-gradient(1000px 600px at 50% 20%, var(--radial-color) 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  .splash.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  .splash-mark{
+    width:88px;height:88px;
+    border-radius:26px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Amiri', serif;
+    font-weight:700;
+    font-size:44px;
+    color:var(--deep-green-2);
+    box-shadow:0 10px 30px rgba(201,162,75,.4);
+    animation:splashPop 1s cubic-bezier(.2,.8,.2,1);
+  }
+  .splash-title{
+    font-family:'Amiri', serif;
+    font-size:32px;
+    font-weight:700;
+    color:var(--gold-light);
+    animation:fadeIn 1s ease .2s backwards;
+  }
+  .splash-sub{
+    font-size:13px;
+    color:var(--text-sub);
+    letter-spacing:2px;
+    animation:fadeIn 1s ease .35s backwards;
+  }
+  .splash-loader{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:3px solid rgba(201,162,75,.25);
+    border-top-color:var(--gold-light);
+    animation:spin .9s linear infinite;
+    margin-top:10px;
+  }
+  @keyframes splashPop{
+    0%{opacity:0; transform:scale(.6);}
+    60%{opacity:1; transform:scale(1.08);}
+    100%{opacity:1; transform:scale(1);}
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* Settings panel */
+  .settings-overlay{
+    position:fixed; inset:0;
+    z-index:90;
+    background:rgba(4,15,11,.6);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    opacity:0; visibility:hidden;
+    transition:opacity .3s ease, visibility .3s ease;
+  }
+  .settings-overlay.open{opacity:1; visibility:visible;}
+  .settings-panel{
+    width:100%;
+    max-width:460px;
+    max-height:88vh;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, var(--panel-top) 0%, var(--panel-bottom) 100%);
+    border:1px solid var(--card-border);
+    border-bottom:none;
+    border-radius:24px 24px 0 0;
+    overflow:hidden;
+    transform:translateY(100%);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .settings-overlay.open .settings-panel{transform:translateY(0);}
+  .settings-head{
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel-top);
+    border-bottom:1px solid var(--card-border);
+    padding:18px 20px;
+  }
+  .settings-head h3{
+    font-family:'Amiri', serif;
+    font-size:19px;
+    color:var(--panel-text);
+    font-weight:700;
+  }
+  .settings-body{
+    flex:1;
+    overflow-y:auto;
+    padding:16px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling:touch;
+  }
+  .settings-section-title{
+    font-size:11.5px;
+    color:var(--text-sub);
+    letter-spacing:.5px;
+    margin:18px 4px 4px;
+    text-transform:uppercase;
+  }
+  .settings-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 4px;
+    border-bottom:1px solid var(--card-border);
+  }
+  .settings-row:last-of-type{border-bottom:none;}
+  .settings-row-label{font-size:13.5px; font-weight:600; color:var(--text-main);}
+  .settings-row-sub{font-size:11.5px; color:var(--text-sub); margin-top:2px;}
+  .settings-select{
+    width:100%;
+    padding:12px 12px;
+    border-radius:12px;
+    border:1px solid var(--card-border);
+    background:var(--card-bg);
+    color:var(--text-main);
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+  }
+  .settings-select option{ color:#111; }
+  .settings-btn{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--card-border);
+    background:var(--card-bg);
+    color:var(--panel-text);
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .settings-btn svg{width:16px;height:16px;}
+  .settings-btn:active{transform:scale(.98);}
+  .settings-btn.primary{
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:var(--deep-green-2);
+    border:none;
+  }
+  .settings-btn[hidden]{display:none;}
+  .about-box{
+    font-size:12.5px;
+    line-height:1.9;
+    color:var(--text-sub);
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:14px;
+    margin-top:6px;
+  }
+  .about-box b{color:var(--text-main);}
+  .theme-toggle-group{
+    display:flex;
+    gap:8px;
+  }
+  .theme-opt{
+    flex:1;
+    padding:10px 6px;
+    border-radius:12px;
+    border:1px solid var(--card-border);
+    background:var(--card-bg);
+    color:var(--text-main);
+    font-family:'Cairo', sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .theme-opt svg{width:15px;height:15px;}
+  .theme-opt.active{
+    border-color:var(--gold);
+    background:linear-gradient(160deg, rgba(201,162,75,.25), rgba(201,162,75,.08));
+    color:var(--panel-text);
+  }
+</style>
+</head>
+<body>
+<div class="splash" id="splash">
+  <div class="splash-mark">أ</div>
+  <div class="splash-title">أثر</div>
+  <div class="splash-sub">ATHAR — مواقيت الصلاة</div>
+  <div class="splash-loader"></div>
+</div>
+
+<div class="app">
+  <div class="pattern-bg"></div>
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">أ</div>
+      <div>
+        <div class="brand-title">أثر</div>
+        <div class="brand-sub">ATHAR — مواقيت الصلاة</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="settingsToggle" title="الإعدادات"></button>
+    </div>
+  </header>
+
+  <div class="location-badge" id="locationBadge" title="اضغط لتغيير المدينة">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+    <span>المنطقة: <b id="regionName">غزة، فلسطين</b></span>
+  </div>
+
+  <div class="clock-section">
+    <div class="clock"><span id="clockTime">--:--</span><small id="clockPeriod">--</small><small id="clockSec" class="clock-sec">--</small></div>
+    <div class="dates">
+      <span id="gregDate">--</span>
+      <span id="hijriDate">--</span>
+    </div>
+  </div>
+
+  <div class="next-card">
+    <div class="next-label"><span class="dot-pulse"></span> الصلاة القادمة</div>
+    <div class="next-name" id="nextPrayerName">جارِ التحميل...</div>
+    <div class="next-time" id="nextPrayerTime">جارِ التحميل...</div>
+    <div class="countdown-wrap">
+      <div class="countdown-ring">
+        <svg width="88" height="88">
+          <circle class="bg-ring" cx="44" cy="44" r="38" stroke-width="6" fill="none"/>
+          <circle class="fg-ring" id="ringProgress" cx="44" cy="44" r="38" stroke-width="6" fill="none"
+            stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+        </svg>
+        <div class="countdown-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2c1.8 1.6 2.6 3 2.6 4.4A2.6 2.6 0 0 1 12 9a2.6 2.6 0 0 1-2.6-2.6C9.4 5 10.2 3.6 12 2Z"></path>
+            <path d="M12 9v3"></path>
+            <path d="M4 21v-6a4 4 0 0 1 2-3.46l1-.58"></path>
+            <path d="M20 21v-6a4 4 0 0 0-2-3.46l-1-.58"></path>
+            <path d="M9 12a3 3 0 0 1 6 0v2H9v-2Z"></path>
+            <path d="M3 21h18"></path>
+            <path d="M6 21v-4"></path>
+            <path d="M18 21v-4"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="countdown-text">
+        <div class="countdown-num" id="countdownNum">--:--:--</div>
+        <div class="countdown-caption">الوقت المتبقي حتى الأذان</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-title">مواقيت اليوم</div>
+  <div class="prayers-grid" id="prayersGrid"></div>
+
+  <div class="athan-card">
+    <div class="athan-info">
+      <div class="athan-emoji">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+          <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="athan-title">تنبيه الأذان</div>
+        <div class="athan-sub" id="athanStatus">مُفعّل — سيتم تشغيل الصوت عند كل وقت صلاة</div>
+      </div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="athanToggle" checked>
+      <span class="switch-track"></span>
+    </label>
+  </div>
+
+  <div class="status-msg" id="statusMsg"></div>
+
+  <footer>
+    صُنع بـ <span class="amiri">﴾ اللهم صل وسلم على نبينا محمد ﴿</span>
+  </footer>
+</div>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-head">
+      <h3>الإعدادات</h3>
+      <button class="icon-btn" id="settingsClose" title="إغلاق"></button>
+    </div>
+
+    <div class="settings-body">
+    <div class="settings-section-title">عام</div>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">تنبيه الأذان (صوت)</div>
+        <div class="settings-row-sub">تشغيل صوت عند دخول وقت كل صلاة</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="athanToggleSettings" checked>
+        <span class="switch-track"></span>
+      </label>
+    </div>
+    <button class="settings-btn" id="testSoundBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+      تجربة الصوت الآن
+    </button>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">إشعارات الصلاة</div>
+        <div class="settings-row-sub" id="notifSub">إرسال إشعار للجهاز عند دخول وقت كل صلاة</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="notifToggle">
+        <span class="switch-track"></span>
+      </label>
+    </div>
+    <button class="settings-btn" id="testNotifBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      إرسال إشعار تجريبي الآن
+    </button>
+    <div class="settings-row-sub" id="testResultMsg" style="text-align:center; margin-top:6px;"></div>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">تذكير مبكر</div>
+        <div class="settings-row-sub">تنبيه قبل 10 دقائق من كل أذان</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="preReminderToggle">
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <div class="settings-section-title">المظهر</div>
+    <div class="settings-row" style="display:block;">
+      <div class="theme-toggle-group">
+        <button class="theme-opt" id="themeDarkBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646Z"/></svg>
+          ليلي
+        </button>
+        <button class="theme-opt" id="themeLightBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          نهاري
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-section-title">الموقع</div>
+    <div class="settings-row" style="display:block;">
+      <div class="settings-row-label" style="margin-bottom:8px;">اختر المدينة</div>
+      <select class="settings-select" id="citySelect"></select>
+      <button class="settings-btn" id="useLocationBtn" type="button" style="margin-top:10px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="6"/></svg>
+        استخدام موقعي الحالي (GPS)
+      </button>
+    </div>
+
+    <button class="settings-btn primary" id="installBtn" type="button" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+      تثبيت التطبيق على الجهاز
+    </button>
+
+    <button class="settings-btn" id="refreshBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+        <path d="M21 3v6h-6"></path>
+      </svg>
+      تحديث المواقيت الآن
+    </button>
+
+    <div class="settings-section-title">عن التطبيق</div>
+    <div class="about-box">
+      <b>أثر — Athar</b> · الإصدار 1.0.0<br>
+      تطبيق لعرض مواقيت الصلاة والأذان بدقة حسب مدينتك، يعمل بدون اتصال بعد أول فتح، ويمكن تثبيته على شاشة جهازك الرئيسية كتطبيق مستقل.<br><br>
+      بيانات المواقيت مصدرها خدمة <b>Al Adhan API</b>.<br>
+      جميع الإعدادات (الأذان، المظهر، المدينة) تُحفظ محلياً على جهازك فقط ولا تُرسل لأي خادم.
+    </div>
+    </div>
+  </div>
+</div>
+
+<audio id="athanAudio" preload="none">
+  <source src="athan.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  "use strict";
+
+  const PRAYER_KEYS = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+
+  const SVG_ATTRS = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+  const ICONS = {
+    fajr:   `<svg ${SVG_ATTRS}><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>`,
+    dhuhr:  `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>`,
+    asr:    `<svg ${SVG_ATTRS}><path d="M12 4V2"/><path d="m6.3 6.3-1.4-1.4"/><path d="M4 13h2"/><circle cx="12" cy="13" r="4"/><path d="M18 13h2"/><path d="m19.1 4.9-1.4 1.4"/><path d="M17 21H7a4 4 0 0 1-.6-7.96"/><path d="M17 21a3 3 0 0 0 .6-5.94"/></svg>`,
+    maghrib:`<svg ${SVG_ATTRS}><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>`,
+    isha:   `<svg ${SVG_ATTRS}><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>`,
+    gear:   `<svg ${SVG_ATTRS}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>`,
+    close:  `<svg ${SVG_ATTRS}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`
+  };
+
+  const PRAYER_META = {
+    Fajr:   { name:"الفجر",  icon:ICONS.fajr },
+    Dhuhr:  { name:"الظهر",  icon:ICONS.dhuhr },
+    Asr:    { name:"العصر",  icon:ICONS.asr },
+    Maghrib:{ name:"المغرب", icon:ICONS.maghrib },
+    Isha:   { name:"العشاء", icon:ICONS.isha }
+  };
+
+  const CITIES = [
+    { id:"gaza", ar:"غزة، فلسطين", city:"Gaza", country:"Palestine" },
+    { id:"jerusalem", ar:"القدس، فلسطين", city:"Jerusalem", country:"Palestine" },
+    { id:"mecca", ar:"مكة المكرمة، السعودية", city:"Mecca", country:"Saudi Arabia" },
+    { id:"medina", ar:"المدينة المنورة، السعودية", city:"Medina", country:"Saudi Arabia" },
+    { id:"riyadh", ar:"الرياض، السعودية", city:"Riyadh", country:"Saudi Arabia" },
+    { id:"cairo", ar:"القاهرة، مصر", city:"Cairo", country:"Egypt" },
+    { id:"amman", ar:"عمّان، الأردن", city:"Amman", country:"Jordan" },
+    { id:"beirut", ar:"بيروت، لبنان", city:"Beirut", country:"Lebanon" },
+    { id:"damascus", ar:"دمشق، سوريا", city:"Damascus", country:"Syria" },
+    { id:"baghdad", ar:"بغداد، العراق", city:"Baghdad", country:"Iraq" },
+    { id:"doha", ar:"الدوحة، قطر", city:"Doha", country:"Qatar" },
+    { id:"dubai", ar:"دبي، الإمارات", city:"Dubai", country:"United Arab Emirates" },
+    { id:"kuwait", ar:"الكويت", city:"Kuwait City", country:"Kuwait" },
+    { id:"manama", ar:"المنامة، البحرين", city:"Manama", country:"Bahrain" },
+    { id:"muscat", ar:"مسقط، عُمان", city:"Muscat", country:"Oman" },
+    { id:"sanaa", ar:"صنعاء، اليمن", city:"Sanaa", country:"Yemen" },
+    { id:"rabat", ar:"الرباط، المغرب", city:"Rabat", country:"Morocco" },
+    { id:"tunis", ar:"تونس العاصمة", city:"Tunis", country:"Tunisia" },
+    { id:"algiers", ar:"الجزائر العاصمة", city:"Algiers", country:"Algeria" },
+    { id:"tripoli", ar:"طرابلس، ليبيا", city:"Tripoli", country:"Libya" },
+    { id:"khartoum", ar:"الخرطوم، السودان", city:"Khartoum", country:"Sudan" },
+    { id:"istanbul", ar:"إسطنبول، تركيا", city:"Istanbul", country:"Turkey" },
+    { id:"jakarta", ar:"جاكرتا، إندونيسيا", city:"Jakarta", country:"Indonesia" },
+    { id:"kualalumpur", ar:"كوالالمبور، ماليزيا", city:"Kuala Lumpur", country:"Malaysia" },
+    { id:"london", ar:"لندن، بريطانيا", city:"London", country:"United Kingdom" },
+    { id:"newyork", ar:"نيويورك، أمريكا", city:"New York", country:"United States" },
+    { id:"paris", ar:"باريس، فرنسا", city:"Paris", country:"France" }
+  ];
+
+  const SETTINGS_KEY = "athar_settings_v1";
+  const DEFAULT_SETTINGS = {
+    athan:true,
+    notifications:false,
+    preReminder:false,
+    preReminderMinutes:10,
+    theme:"dark",
+    cityId:"gaza",
+    useGeo:false,
+    geoLat:null,
+    geoLng:null,
+    geoLabel:null
+  };
+
+  function loadSettings(){
+    try{
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      return Object.assign({}, DEFAULT_SETTINGS, raw ? JSON.parse(raw) : {});
+    }catch(e){
+      return Object.assign({}, DEFAULT_SETTINGS);
+    }
+  }
+  function saveSettings(){
+    try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){}
+  }
+
+  let settings = loadSettings();
+
+  const el = {
+    clock: document.getElementById('clockTime'),
+    clockPeriod: document.getElementById('clockPeriod'),
+    clockSec: document.getElementById('clockSec'),
+    gregDate: document.getElementById('gregDate'),
+    hijriDate: document.getElementById('hijriDate'),
+    nextName: document.getElementById('nextPrayerName'),
+    nextTime: document.getElementById('nextPrayerTime'),
+    countdownNum: document.getElementById('countdownNum'),
+    ring: document.getElementById('ringProgress'),
+    grid: document.getElementById('prayersGrid'),
+    splash: document.getElementById('splash'),
+    settingsToggle: document.getElementById('settingsToggle'),
+    settingsClose: document.getElementById('settingsClose'),
+    settingsOverlay: document.getElementById('settingsOverlay'),
+    athanToggle: document.getElementById('athanToggle'),
+    athanToggleSettings: document.getElementById('athanToggleSettings'),
+    athanStatus: document.getElementById('athanStatus'),
+    athanAudio: document.getElementById('athanAudio'),
+    refreshBtn: document.getElementById('refreshBtn'),
+    statusMsg: document.getElementById('statusMsg'),
+    locationBadge: document.getElementById('locationBadge'),
+    regionName: document.getElementById('regionName'),
+    citySelect: document.getElementById('citySelect'),
+    useLocationBtn: document.getElementById('useLocationBtn'),
+    notifToggle: document.getElementById('notifToggle'),
+    testSoundBtn: document.getElementById('testSoundBtn'),
+    testNotifBtn: document.getElementById('testNotifBtn'),
+    testResultMsg: document.getElementById('testResultMsg'),
+    notifSub: document.getElementById('notifSub'),
+    preReminderToggle: document.getElementById('preReminderToggle'),
+    themeDarkBtn: document.getElementById('themeDarkBtn'),
+    themeLightBtn: document.getElementById('themeLightBtn'),
+    installBtn: document.getElementById('installBtn'),
+    themeColorMeta: document.getElementById('themeColorMeta')
+  };
+
+  const RING_CIRC = 238.76;
+  let timings = null;
+  let hijriText = "";
+  let lastFiredKey = null;
+  let splashHidden = false;
+  let scheduledTimers = [];
+  let deferredInstallPrompt = null;
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function to12(date){
+    let h = date.getHours();
+    const period = h >= 12 ? 'م' : 'ص';
+    h = h % 12;
+    if(h === 0) h = 12;
+    return { text: h + ':' + pad(date.getMinutes()), period };
+  }
+
+  function hideSplash(){
+    if(splashHidden) return;
+    splashHidden = true;
+    el.splash.classList.add('hide');
+  }
+
+  function toTodayDate(hhmm){
+    const clean = hhmm.split(' ')[0];
+    const [h,m] = clean.split(':').map(Number);
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
+
+  function currentLocationLabel(){
+    if(settings.useGeo){
+      return settings.geoLabel || "الموقع الحالي (GPS)";
+    }
+    const c = CITIES.find(c => c.id === settings.cityId) || CITIES[0];
+    return c.ar;
+  }
+
+  function buildApiUrl(){
+    if(settings.useGeo && settings.geoLat != null && settings.geoLng != null){
+      return `https://api.aladhan.com/v1/timings?latitude=${settings.geoLat}&longitude=${settings.geoLng}&method=4`;
+    }
+    const c = CITIES.find(c => c.id === settings.cityId) || CITIES[0];
+    return `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(c.city)}&country=${encodeURIComponent(c.country)}&method=4`;
+  }
+
+  async function fetchTimings(){
+    el.statusMsg.textContent = "جارِ جلب مواقيت الصلاة...";
+    el.regionName.textContent = currentLocationLabel();
+    try{
+      const res = await fetch(buildApiUrl());
+      if(!res.ok) throw new Error("network");
+      const data = await res.json();
+      const t = data.data.timings;
+      timings = {};
+      PRAYER_KEYS.forEach(k => { timings[k] = toTodayDate(t[k]); });
+
+      const hijri = data.data.date.hijri;
+      hijriText = `${hijri.day} ${hijri.month.ar} ${hijri.year} هـ`;
+
+      renderGrid();
+      scheduleNotifications();
+      el.statusMsg.textContent = "";
+    }catch(err){
+      el.statusMsg.textContent = "تعذّر الاتصال بخدمة المواقيت — سيُعاد المحاولة تلقائياً";
+      setTimeout(fetchTimings, 8000);
+    }finally{
+      setTimeout(hideSplash, 500);
+    }
+  }
+
+  function renderGrid(){
+    el.grid.innerHTML = "";
+    PRAYER_KEYS.forEach(key => {
+      const meta = PRAYER_META[key];
+      const card = document.createElement('div');
+      card.className = 'prayer-card';
+      card.id = 'card-' + key;
+      card.innerHTML = `
+        <div class="prayer-icon">${meta.icon}</div>
+        <div class="prayer-name">${meta.name}</div>
+        <div class="prayer-time">${to12(timings[key]).text} <span style="font-size:11px; opacity:.75;">${to12(timings[key]).period}</span></div>
+      `;
+      el.grid.appendChild(card);
+    });
+  }
+
+  function getNextPrayer(now){
+    for(const key of PRAYER_KEYS){
+      if(timings[key] > now) return key;
+    }
+    return null;
+  }
+
+  function updateClock(){
+    const now = new Date();
+    const t12 = to12(now);
+    el.clock.textContent = t12.text;
+    el.clockPeriod.textContent = t12.period;
+    el.clockSec.textContent = pad(now.getSeconds());
+
+    el.gregDate.textContent = now.toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    el.hijriDate.textContent = hijriText || '--';
+
+    if(!timings) return;
+
+    PRAYER_KEYS.forEach(key => {
+      const card = document.getElementById('card-' + key);
+      if(!card) return;
+      card.classList.remove('active','passed');
+      if(timings[key] <= now) card.classList.add('passed');
+    });
+
+    let nextKey = getNextPrayer(now);
+    let nextTime, isTomorrowFajr = false;
+
+    if(nextKey){
+      nextTime = timings[nextKey];
+    }else{
+      nextKey = "Fajr";
+      isTomorrowFajr = true;
+      nextTime = new Date(timings.Fajr.getTime() + 24*60*60*1000);
+    }
+
+    const meta = PRAYER_META[nextKey];
+    el.nextName.textContent = meta.name;
+    const nt12 = to12(nextTime);
+    el.nextTime.textContent = "الساعة " + nt12.text + " " + nt12.period + (isTomorrowFajr ? ' (غداً)' : '');
+
+    if(!isTomorrowFajr){
+      const activeCard = document.getElementById('card-' + nextKey);
+      if(activeCard) activeCard.classList.add('active');
+    }
+
+    let diff = Math.max(0, nextTime - now);
+    const hh = Math.floor(diff / 3600000);
+    const mm = Math.floor((diff % 3600000) / 60000);
+    const ss = Math.floor((diff % 60000) / 1000);
+    el.countdownNum.textContent = `${pad(hh)}:${pad(mm)}:${pad(ss)}`;
+
+    let windowStart;
+    const idx = PRAYER_KEYS.indexOf(nextKey);
+    if(isTomorrowFajr){
+      windowStart = timings.Isha;
+    }else if(idx === 0){
+      const midnight = new Date(now); midnight.setHours(0,0,0,0);
+      windowStart = midnight;
+    }else{
+      windowStart = timings[PRAYER_KEYS[idx-1]];
+    }
+    const total = nextTime - windowStart;
+    const elapsed = now - windowStart;
+    const fraction = total > 0 ? Math.min(1, Math.max(0, elapsed/total)) : 0;
+    el.ring.setAttribute('stroke-dashoffset', String(RING_CIRC * (1 - fraction)));
+
+    if(el.athanToggle.checked){
+      PRAYER_KEYS.forEach(key => {
+        const t = timings[key];
+        if(now.getHours() === t.getHours() && now.getMinutes() === t.getMinutes() && now.getSeconds() === 0){
+          const fireId = key + '-' + now.toDateString();
+          if(lastFiredKey !== fireId){
+            lastFiredKey = fireId;
+            playAthan(PRAYER_META[key].name);
+          }
+        }
+      });
+    }
+  }
+
+  function playAthan(prayerName){
+    el.statusMsg.textContent = `حان الآن وقت صلاة ${prayerName}`;
+    try{
+      if(el.athanAudio.querySelector('source')){
+        el.athanAudio.currentTime = 0;
+        el.athanAudio.play().catch(()=>{});
+      }
+    }catch(e){}
+    setTimeout(()=>{ if(el.statusMsg.textContent.includes(prayerName)) el.statusMsg.textContent=""; }, 15000);
+  }
+
+  /* ---------- Notifications ---------- */
+
+  function sendNotification(title, body, tag){
+    if(Notification.permission !== "granted") return;
+    if(navigator.serviceWorker && navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({ type:"SHOW_NOTIFICATION", title, body, tag });
+    }else if(navigator.serviceWorker && navigator.serviceWorker.ready){
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(title, { body, icon:"icon-192.png", badge:"icon-192.png", dir:"rtl", lang:"ar", tag });
+      }).catch(()=>{
+        try{ new Notification(title, { body, icon:"icon-192.png" }); }catch(e){}
+      });
+    }else{
+      try{ new Notification(title, { body, icon:"icon-192.png" }); }catch(e){}
+    }
+  }
+
+  function clearScheduledNotifications(){
+    scheduledTimers.forEach(id => clearTimeout(id));
+    scheduledTimers = [];
+  }
+
+  function scheduleNotifications(){
+    clearScheduledNotifications();
+    if(!settings.notifications || Notification.permission !== "granted" || !timings) return;
+
+    const now = new Date();
+    PRAYER_KEYS.forEach(key => {
+      const t = timings[key];
+      const name = PRAYER_META[key].name;
+
+      const msUntil = t - now;
+      if(msUntil > 0 && msUntil < 24*60*60*1000){
+        const id = setTimeout(() => {
+          sendNotification("حان وقت الصلاة", `حان الآن وقت صلاة ${name}`, "athar-" + key);
+        }, msUntil);
+        scheduledTimers.push(id);
+      }
+
+      if(settings.preReminder){
+        const preMs = msUntil - settings.preReminderMinutes*60000;
+        if(preMs > 0 && preMs < 24*60*60*1000){
+          const id2 = setTimeout(() => {
+            sendNotification("تذكير بالصلاة", `تبقّى ${settings.preReminderMinutes} دقائق على أذان ${name}`, "athar-pre-" + key);
+          }, preMs);
+          scheduledTimers.push(id2);
+        }
+      }
+    });
+  }
+
+  function updateNotifSub(){
+    if(!("Notification" in window)){
+      el.notifSub.textContent = "الإشعارات غير مدعومة في هذا المتصفح";
+      el.notifToggle.disabled = true;
+      return;
+    }
+    if(Notification.permission === "denied"){
+      el.notifSub.textContent = "تم رفض إذن الإشعارات من إعدادات المتصفح";
+    }else{
+      el.notifSub.textContent = "إرسال إشعار للجهاز عند دخول وقت كل صلاة";
+    }
+  }
+
+  /* ---------- Settings UI wiring ---------- */
+
+  function populateCitySelect(){
+    el.citySelect.innerHTML = "";
+    CITIES.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.ar;
+      el.citySelect.appendChild(opt);
+    });
+    el.citySelect.value = settings.cityId;
+  }
+
+  function applyTheme(){
+    document.documentElement.setAttribute('data-theme', settings.theme);
+    el.themeDarkBtn.classList.toggle('active', settings.theme === 'dark');
+    el.themeLightBtn.classList.toggle('active', settings.theme === 'light');
+    el.themeColorMeta.setAttribute('content', settings.theme === 'light' ? '#f3ecd8' : '#0d3b2e');
+  }
+
+  function applySettingsToUI(){
+    el.athanToggle.checked = settings.athan;
+    el.athanToggleSettings.checked = settings.athan;
+    setAthanStatus(settings.athan);
+    el.notifToggle.checked = settings.notifications && Notification && Notification.permission === "granted";
+    el.preReminderToggle.checked = settings.preReminder;
+    populateCitySelect();
+    applyTheme();
+    el.regionName.textContent = currentLocationLabel();
+    updateNotifSub();
+  }
+
+  function setAthanStatus(checked){
+    el.athanStatus.textContent = checked
+      ? "مُفعّل — سيتم تشغيل الصوت عند كل وقت صلاة"
+      : "مُعطّل — لن يتم تشغيل صوت الأذان";
+  }
+
+  el.athanToggle.addEventListener('change', () => {
+    settings.athan = el.athanToggle.checked;
+    el.athanToggleSettings.checked = settings.athan;
+    setAthanStatus(settings.athan);
+    saveSettings();
+  });
+  el.athanToggleSettings.addEventListener('change', () => {
+    settings.athan = el.athanToggleSettings.checked;
+    el.athanToggle.checked = settings.athan;
+    setAthanStatus(settings.athan);
+    saveSettings();
+  });
+
+  el.notifToggle.addEventListener('change', async () => {
+    if(el.notifToggle.checked){
+      if(!("Notification" in window)){
+        el.notifToggle.checked = false;
+        return;
+      }
+      const perm = await Notification.requestPermission();
+      if(perm !== "granted"){
+        el.notifToggle.checked = false;
+        updateNotifSub();
+        return;
+      }
+      settings.notifications = true;
+    }else{
+      settings.notifications = false;
+    }
+    saveSettings();
+    updateNotifSub();
+    scheduleNotifications();
+  });
+
+  el.preReminderToggle.addEventListener('change', () => {
+    settings.preReminder = el.preReminderToggle.checked;
+    saveSettings();
+    scheduleNotifications();
+  });
+
+  el.testSoundBtn.addEventListener('click', () => {
+    const hasSource = !!el.athanAudio.querySelector('source');
+    if(!hasSource){
+      el.testResultMsg.textContent = "لا يوجد ملف صوت مضاف بعد — راجع خطوة إضافة athan.mp3";
+      el.testResultMsg.style.color = "#e08b8b";
+      return;
+    }
+    el.athanAudio.currentTime = 0;
+    el.athanAudio.play().then(() => {
+      el.testResultMsg.textContent = "تم تشغيل الصوت ✓";
+      el.testResultMsg.style.color = "";
+    }).catch((err) => {
+      el.testResultMsg.textContent = "تعذّر تشغيل الصوت: " + (err && err.message ? err.message : "خطأ غير معروف");
+      el.testResultMsg.style.color = "#e08b8b";
+    });
+  });
+
+  el.testNotifBtn.addEventListener('click', async () => {
+    if(!("Notification" in window)){
+      el.testResultMsg.textContent = "الإشعارات غير مدعومة في هذا المتصفح";
+      el.testResultMsg.style.color = "#e08b8b";
+      return;
+    }
+    let perm = Notification.permission;
+    if(perm === "default"){
+      perm = await Notification.requestPermission();
+    }
+    if(perm !== "granted"){
+      el.testResultMsg.textContent = "الإذن مرفوض — فعّله من إعدادات المتصفح/الجهاز للموقع";
+      el.testResultMsg.style.color = "#e08b8b";
+      return;
+    }
+    sendNotification("إشعار تجريبي", "إذا وصلك هذا الإشعار فكل شيء يعمل بشكل صحيح ✓", "athar-test");
+    el.testResultMsg.textContent = "تم إرسال الإشعار — تحقق من شريط الإشعارات";
+    el.testResultMsg.style.color = "";
+  });
+
+  el.themeDarkBtn.addEventListener('click', () => {
+    settings.theme = 'dark';
+    saveSettings();
+    applyTheme();
+  });
+  el.themeLightBtn.addEventListener('click', () => {
+    settings.theme = 'light';
+    saveSettings();
+    applyTheme();
+  });
+
+  el.citySelect.addEventListener('change', () => {
+    settings.cityId = el.citySelect.value;
+    settings.useGeo = false;
+    saveSettings();
+    fetchTimings();
+  });
+
+  el.useLocationBtn.addEventListener('click', () => {
+    if(!navigator.geolocation){
+      el.statusMsg.textContent = "تحديد الموقع غير مدعوم على هذا الجهاز";
+      return;
+    }
+    el.statusMsg.textContent = "جارِ تحديد موقعك...";
+    navigator.geolocation.getCurrentPosition((pos) => {
+      settings.useGeo = true;
+      settings.geoLat = pos.coords.latitude;
+      settings.geoLng = pos.coords.longitude;
+      settings.geoLabel = "الموقع الحالي (GPS)";
+      saveSettings();
+      fetchTimings();
+    }, (err) => {
+      el.statusMsg.textContent = "تعذّر الوصول لموقعك — تحقق من إذن الموقع";
+    }, { enableHighAccuracy:true, timeout:10000 });
+  });
+
+  el.locationBadge.addEventListener('click', openSettings);
+
+  function openSettings(){ el.settingsOverlay.classList.add('open'); }
+  function closeSettings(){ el.settingsOverlay.classList.remove('open'); }
+  el.settingsToggle.addEventListener('click', openSettings);
+  el.settingsClose.addEventListener('click', closeSettings);
+  el.settingsOverlay.addEventListener('click', (e) => {
+    if(e.target === el.settingsOverlay) closeSettings();
+  });
+
+  el.refreshBtn.addEventListener('click', () => {
+    fetchTimings();
+    closeSettings();
+  });
+
+  /* ---------- Install (PWA) ---------- */
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    el.installBtn.hidden = false;
+  });
+
+  el.installBtn.addEventListener('click', async () => {
+    if(!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    el.installBtn.hidden = true;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    el.installBtn.hidden = true;
+    deferredInstallPrompt = null;
+  });
+
+  /* ---------- Service worker registration ---------- */
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {
+        /* عدم توفر خدمة العامل لا يمنع عمل التطبيق نفسه */
+      });
+    });
+  }
+
+  /* ---------- Icon assignments ---------- */
+  el.settingsToggle.innerHTML = ICONS.gear;
+  el.settingsClose.innerHTML = ICONS.close;
+
+  /* ---------- init ---------- */
+  applySettingsToUI();
+  fetchTimings();
+  setTimeout(hideSplash, 4000);
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  setInterval(() => {
+    const now = new Date();
+    if(now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 1){
+      fetchTimings();
+    }
+  }, 1000);
+})();
+</script>
+</body>
+</html>
