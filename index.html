@@ -717,15 +717,18 @@
     color:var(--panel-text);
   }
 </style>
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
-window.OneSignalDeferred = window.OneSignalDeferred || [];
-OneSignalDeferred.push(async function(OneSignal) {
-  await OneSignal.init({
-    appId: "a05f1588-e65d-442a-99a9-cc8d5512cd7a",
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "a05f1588-e65d-442a-99a9-cc8d5512cd7a",
+      safari_web_id: "web.onesignal.auto.68a9d4a9-72e3-41ba-a788-4f8badeb71ae",
+      notifyButton: {
+        enable: true,
+      },
+    });
   });
-});
 </script>
 </head>
 <body>
