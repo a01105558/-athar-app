@@ -717,6 +717,16 @@
     color:var(--panel-text);
   }
 </style>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function(OneSignal) {
+  await OneSignal.init({
+    appId: "a05f1588-e65d-442a-99a9-cc8d5512cd7a",
+  });
+});
+</script>
 </head>
 <body>
 <div class="splash" id="splash">
